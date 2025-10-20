@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Happy Birthday 🎉</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#ff6b6b}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans Bengali',sans-serif;background:linear-gradient(135deg,#08122a 0%,#08112a 50%,#041022 100%);color:#fff}
+    .wrap{height:100%;display:flex;align-items:center;justify-content:center;padding:10px}
+    .card{width:100%;max-width:480px;background:rgba(255,255,255,0.03);border-radius:18px;padding:20px;box-shadow:0 6px 20px rgba(2,6,23,0.7);position:relative;overflow:hidden}
+    h1{font-size:28px;margin:0 0 8px;line-height:1.2}
+    p.lead{margin:0 0 12px;opacity:0.9;font-size:16px}
+    .big-msg{font-size:20px;margin:10px 0 16px;line-height:1.3}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{background:linear-gradient(90deg,var(--accent),#ff9a9a);border:none;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(255,107,107,0.18);font-size:14px}
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06)}
+    .confetti-canvas{position:absolute;inset:0;pointer-events:none}
+    .full-wish{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;background:linear-gradient(180deg,rgba(0,0,0,0.35),rgba(0,0,0,0.6));backdrop-filter:blur(4px);padding:10px}
+    .wish-card{background:rgba(255,255,255,0.04);padding:20px;border-radius:14px;text-align:center;max-width:90%}
+    .name{font-size:28px;font-weight:800;margin:6px 0;color:#ffb6b9;text-shadow:0 0 8px rgba(255,182,185,0.8)}
+    .typed{font-size:16px;opacity:0.95;font-weight:500}
+    .sparkle{position:absolute;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff,#ffd9d9);box-shadow:0 0 14px rgba(255,200,200,0.9)}
+    footer{margin-top:12px;font-size:12px;opacity:0.8}
+    @keyframes glowText {0%,100%{text-shadow:0 0 8px #ff9aa2,0 0 16px #ff9aa2;}50%{text-shadow:0 0 16px #ffb6b9,0 0 32px #ffb6b9;}}
+    .glow {animation:glowText 2s infinite ease-in-out;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" id="card">
+      <canvas id="confetti" class="confetti-canvas"></canvas>
+      <h1> তোমার লাইগা একটা Funny Surprise আছে 😄🎉</h1>
+      <p class="lead">নিচের বাটনে Click করো👇... </p>
+      <div class="controls">
+        <button class="btn" id="startBtn">Open Surprise</button>
+        <button class="btn secondary" id="previewBtn">Preview (owner)</button>
+      </div>
+      <footer>Made with ❤️ by Utshob For — Sohana</footer>
+    </div>
+  </div>
+
+  <div id="wishOverlay" class="full-wish" style="display:none">
+    <div class="wish-card" id="wishCard">
+      <div style="font-size:18px;opacity:0.9" class="glow">Happy Birthday</div>
+      <div class="name" id="personName">Sohana 🌸</div>
+      <div class="big-msg" id="bigMsg">🌸Etto boro hoya gela 😜👀</div>
+      <div class="typed" id="typedText">My cutie Pandu 🐼, Alien 👽, Bagan Bilash 🌸, Anime Wali, Shanayar Ammu 🤱</div>
+      <div style="margin-top:12px">
+        <button class="btn" id="closeBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="birthdaySong" loop preload="auto" volume="1.0">
+    <source src="birthday-song.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    let CONFIG = {
+      name: 'Sohana 🌸',
+      typedLines: [
+        'My cutie Pandu 🐼, Alien 👽, Bagan Bilash 🌸, Anime Wali, Shanayar Ammu 🤱',
+        'Happy Birthday my dear! 💖',
+        '1000 years বেঁচে থাকো — এই আমার কামনা 😜🎂'
+      ],
+      musicUrl: 'birthday-song.mp3',
+      musicVolume: 1.0 // max volume
+    }
+
+    function typeLines(el, lines, i=0){
+      if(i>=lines.length) return;
+      let text=lines[i], pos=0; el.textContent='';
+      let intr=setInterval(()=>{
+        el.textContent = text.slice(0,pos+1);
+        pos++;
+        if(pos>=text.length){ clearInterval(intr); setTimeout(()=>typeLines(el,lines,i+1),800); }
+      },90);
+    }
+
+    document.getElementById('personName').textContent = CONFIG.name;
+    document.getElementById('bigMsg').textContent = '🌸Etto boro hoya gela 😜👀';
+
+    let audio = document.getElementById('birthdaySong');
+    audio.volume = CONFIG.musicVolume;
+
+    function fireConfetti(){
+      try{
+        if(window.confetti){
+          const duration = 5 * 1000;
+          const end = Date.now() + duration;
+          (function frame(){
+            confetti({particleCount: 6, angle: 60, spread: 55, origin: { x: 0 }});
+            confetti({particleCount: 6, angle: 120, spread: 55, origin: { x: 1 }});
+            if(Date.now() < end) requestAnimationFrame(frame);
+          }());
+        } else {
+          for(let i=0;i<40;i++){ createSparkle(); }
+        }
+      }catch(e){console.warn(e);}
+    }
+
+    function createSparkle(){
+      const s=document.createElement('div'); s.className='sparkle';
+      s.style.left = (20 + Math.random()*60) + '%'; s.style.top = (10 + Math.random()*70)+'%';
+      s.style.transform = 'scale('+ (0.6+Math.random()*1.4) +')';
+      document.getElementById('card').appendChild(s);
+      setTimeout(()=>{ s.style.opacity=0; s.style.transform+=' translateY(-20px)'; }, 100);
+      setTimeout(()=>s.remove(), 2500);
+    }
+
+    function openSurprise(isPreview=false){
+      document.getElementById('wishOverlay').style.display='flex';
+      typeLines(document.getElementById('typedText'), CONFIG.typedLines);
+      fireConfetti();
+      if(!isPreview){
+        audio.currentTime = 0;
+        audio.volume = CONFIG.musicVolume;
+        audio.play().catch(()=>{});
+      }
+    }
+
+    document.getElementById('closeBtn').addEventListener('click',()=>{
+      document.getElementById('wishOverlay').style.display='none';
+      audio.pause();
+      audio.currentTime = 0;
+    });
+
+    document.getElementById('startBtn').addEventListener('click',()=>openSurprise(false));
+    document.getElementById('previewBtn').addEventListener('click',()=>openSurprise(true));
+
+    (function(){
+      var s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js'; s.onload=function(){}; document.head.appendChild(s);
+    }());
+
+    if(location.search.indexOf('open=1')!==-1){ setTimeout(()=>openSurprise(false),700); }
+  </script>
+</body>
+</html>
